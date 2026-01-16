@@ -1,23 +1,23 @@
-name: build_workspace     # Can be anything
+name: build_workspace # Can be anything
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.6.2
 publish_to: none
 dev_dependencies:
   dart_flutter_team_lints: ^3.1.0
 
 workspace:
-- _benchmark
-- build
-- build_config
-- build_daemon
-- build_modules
-- build_runner
-- build_test
-- build_web_compilers
-- example
-- scratch_space
-- tool
-- build_modules/test/fixtures/a
-- build_modules/test/fixtures/b
-- build_web_compilers/test/fixtures/c
-- build_web_compilers/test/fixtures/d
+  - _benchmark
+  - build
+  - build_config
+  - build_daemon
+  - build_modules
+  - build_runner
+  - build_test
+  - build_web_compilers
+  - example
+  - scratch_space
+  - tool
+  - build_modules/test/fixtures/a
+  - build_modules/test/fixtures/b
+  - build_web_compilers/test/fixtures/c
+  - build_web_compilers/test/fixtures/d

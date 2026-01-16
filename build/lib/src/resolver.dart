@@ -6,8 +6,10 @@ import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/error.dart';
+import 'package:analyzer/source/line_info.dart';
 
 import 'asset_id.dart';
 import 'build_step.dart';
@@ -138,7 +140,7 @@ class SyntaxErrorInAssetException implements Exception {
   ///
   /// In addition to the asset itself, the resolver also considers syntax errors
   /// in part files.
-  final List<AnalysisResultWithDiagnostics> filesWithErrors;
+  final List<AnalysisResultWithErrors> filesWithErrors;
 
   SyntaxErrorInAssetException(this.assetId, this.filesWithErrors)
     : assert(filesWithErrors.isNotEmpty);
@@ -148,23 +150,23 @@ class SyntaxErrorInAssetException implements Exception {
   /// This only contains syntax errors since most semantic errors are expected
   /// during a build (e.g. due to missing part files that haven't been generated
   /// yet).
-  Iterable<Diagnostic> get syntaxErrors {
+  Iterable<AnalysisError> get syntaxErrors {
     return filesWithErrors
-        .expand((result) => result.diagnostics)
+        .expand((result) => result.errors)
         .where(_isSyntaxError);
   }
 
   /// A map from [syntaxErrors] to per-file results
-  Map<Diagnostic, AnalysisResultWithDiagnostics> get errorToResult {
+  Map<AnalysisError, AnalysisResultWithErrors> get errorToResult {
     return {
       for (final file in filesWithErrors)
-        for (final error in file.diagnostics)
+        for (final error in file.errors)
           if (_isSyntaxError(error)) error: file,
     };
   }
 
-  bool _isSyntaxError(Diagnostic diagnostic) {
-    return diagnostic.diagnosticCode.type == DiagnosticType.SYNTACTIC_ERROR;
+  bool _isSyntaxError(AnalysisError error) {
+    return error.errorCode.type == ErrorType.SYNTACTIC_ERROR;
   }
 
   @override

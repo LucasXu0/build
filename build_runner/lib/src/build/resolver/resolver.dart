@@ -10,6 +10,7 @@ import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/error.dart';
 // ignore: implementation_imports
@@ -72,14 +73,8 @@ class PerActionResolver implements ReleasableResolver {
       // model manually.
       yield current;
       final toCrawl =
-          current.firstFragment.libraryImports
-              .map((import) => import.importedLibrary)
-              .followedBy(
-                current.firstFragment.libraryExports.map(
-                  (export) => export.exportedLibrary,
-                ),
-              )
-              .nonNulls
+          current.importedLibraries
+              .followedBy(current.exportedLibraries)
               .where((library) => !seen.contains(library))
               .toSet();
       toVisit.addAll(toCrawl);
@@ -267,7 +262,7 @@ class AnalyzerResolver implements ReleasableResolver {
       final parsedResult =
           _driver.currentSession.getParsedUnit(path) as ParsedUnitResult;
       if (!allowSyntaxErrors &&
-          parsedResult.diagnostics.any((e) => e.severity == Severity.error)) {
+          parsedResult.errors.any((e) => e.severity == Severity.error)) {
         throw SyntaxErrorInAssetException(assetId, [parsedResult]);
       }
       return parsedResult.unit;
@@ -315,8 +310,8 @@ class AnalyzerResolver implements ReleasableResolver {
   Future<List<ErrorsResult>> _syntacticErrorsFor(LibraryElement element) async {
     final existingSources = <Source>[];
 
-    for (final fragment in element.fragments) {
-      existingSources.add(fragment.source);
+    for (final unit in element.units) {
+      existingSources.add(unit.source);
     }
 
     // Map from elements to absolute paths
@@ -331,9 +326,9 @@ class AnalyzerResolver implements ReleasableResolver {
       for (final path in paths) {
         final result = await _driver.currentSession.getErrors(path);
         if (result is ErrorsResult &&
-            result.diagnostics.any(
+            result.errors.any(
               (error) =>
-                  error.diagnosticCode.type == DiagnosticType.SYNTACTIC_ERROR,
+                  error.errorCode.type == ErrorType.SYNTACTIC_ERROR,
             )) {
           relevantResults.add(result);
         }
@@ -389,7 +384,7 @@ class AnalyzerResolver implements ReleasableResolver {
       throw UnresolvableAssetException('${element.name} is ambiguous');
     }
 
-    final source = element.firstFragment.libraryFragment?.source;
+    final source = element.library?.definingCompilationUnit.source;
     if (source == null) {
       throw UnresolvableAssetException(
         '${element.name} does not have a source',

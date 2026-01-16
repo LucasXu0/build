@@ -27,7 +27,7 @@ void main() {
   File.fromUri(tempDirectory.uri.resolve('pubspec.yaml')).writeAsStringSync('''
 name: none
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.6.2
 dependencies:
   build_runner: '2.4.15'
   build_test: any
@@ -35,11 +35,10 @@ dependencies:
   Process.runSync('dart', ['pub', 'get'], workingDirectory: tempDirectory.path);
   final pubConfig = PackageConfig(
     json.decode(
-          File.fromUri(
-            tempDirectory.uri.resolve('.dart_tool/package_config.json'),
-          ).readAsStringSync(),
-        )
-        as Map<String, Object?>,
+      File.fromUri(
+        tempDirectory.uri.resolve('.dart_tool/package_config.json'),
+      ).readAsStringSync(),
+    ) as Map<String, Object?>,
   );
 
   // Merge `pubConfig` into the local package config.
@@ -52,11 +51,10 @@ dependencies:
   // not broken by local changes, and whatever generators are needed.
   final mergedConfig = PackageConfig(
     json.decode(
-          File.fromUri(
-            Directory.current.uri.resolve('../.dart_tool/package_config.json'),
-          ).readAsStringSync(),
-        )
-        as Map<String, Object?>,
+      File.fromUri(
+        Directory.current.uri.resolve('../.dart_tool/package_config.json'),
+      ).readAsStringSync(),
+    ) as Map<String, Object?>,
   );
 
   late String buildRunnerPath;
@@ -80,13 +78,16 @@ dependencies:
   );
   mergedConfigFile.writeAsStringSync(json.encode(mergedConfig));
 
-  final buildResult = Process.runSync('dart', [
-    '--packages=${mergedConfigFile.path}',
-    'run',
-    '$buildRunnerPath/bin/build_runner.dart',
-    'build',
-    '-d',
-  ], workingDirectory: Directory.current.path);
+  final buildResult = Process.runSync(
+      'dart',
+      [
+        '--packages=${mergedConfigFile.path}',
+        'run',
+        '$buildRunnerPath/bin/build_runner.dart',
+        'build',
+        '-d',
+      ],
+      workingDirectory: Directory.current.path);
 
   stdout.write(buildResult.stdout);
   stderr.write(buildResult.stderr);
@@ -98,10 +99,9 @@ dependencies:
 }
 
 extension type PackageConfig(Map<String, Object?> node) {
-  List<Package> get packages =>
-      (node['packages'] as List<Object?>)
-          .map((p) => Package(p as Map<String, Object?>))
-          .toList();
+  List<Package> get packages => (node['packages'] as List<Object?>)
+      .map((p) => Package(p as Map<String, Object?>))
+      .toList();
   Package packageNamed(String name) =>
       packages.singleWhere((package) => package.name == name);
 }

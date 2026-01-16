@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 
 /// Copy contents of a `txt` files into `name.txt.copy`.
@@ -68,9 +69,12 @@ class ResolvingBuilder implements Builder {
 
     final info = buildStep.inputId.addExtension('.info');
 
+    final topLevelFunctions = entryLib.topLevelElements
+        .whereType<FunctionElement>()
+        .length;
     await buildStep.writeAsString(info, '''
          Input ID: ${buildStep.inputId}
-     Member count: ${entryLib.topLevelFunctions.length}
+     Member count: $topLevelFunctions
 Visible libraries: $visibleLibraries
 ''');
   }

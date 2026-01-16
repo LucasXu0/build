@@ -1,8 +1,0 @@
-name: b
-resolution: workspace
-environment:
-  sdk: ^3.7.0
-
-dependencies:
-  a:
-    path: ../a

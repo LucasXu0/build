@@ -5,10 +5,10 @@ repository: https://github.com/dart-lang/build/tree/master/build
 resolution: workspace
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.6.2
 
 dependencies:
-  analyzer: '>=8.0.0 <11.0.0'
+  analyzer: ">=7.0.0 <11.0.0"
   crypto: ^3.0.0
   glob: ^2.0.0
   logging: ^1.0.0
@@ -21,6 +21,6 @@ dev_dependencies:
   test: ^1.16.0
 
 topics:
- - build-runner
- - codegen
- - build
+  - build-runner
+  - codegen
+  - build
