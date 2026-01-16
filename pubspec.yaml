@@ -16,6 +16,7 @@ dev_dependencies:
 dependency_overrides:
   analyzer: 6.11.0
   _fe_analyzer_shared: 76.0.0
+  source_helper: 1.3.5
 
 workspace:
   - _benchmark
@@ -28,7 +29,3 @@ workspace:
   - example
   - scratch_space
   - tool
-  - build_modules/test/fixtures/a
-  - build_modules/test/fixtures/b
-  - build_web_compilers/test/fixtures/c
-  - build_web_compilers/test/fixtures/d

@@ -1,0 +1,11 @@
+name: test_analyzer_6
+environment:
+  sdk: ^3.6.2
+
+dependencies:
+  build:
+    path: ../build
+
+dependency_overrides:
+  analyzer: 6.11.0
+  _fe_analyzer_shared: 76.0.0

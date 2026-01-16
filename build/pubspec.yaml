@@ -8,7 +8,7 @@ environment:
   sdk: ^3.6.2
 
 dependencies:
-  analyzer: ">=4.4.0 <8.0.0"
+  analyzer: ">=6.11.0 <8.0.0"
   crypto: ^3.0.0
   glob: ^2.0.0
   logging: ^1.0.0
