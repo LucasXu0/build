@@ -2,8 +2,20 @@ name: build_workspace # Can be anything
 environment:
   sdk: ^3.6.2
 publish_to: none
+dependencies:
+  build: any
+  build_config: any
+  build_daemon: any
+  build_modules: any
+  build_runner: any
+  build_web_compilers: any
+  scratch_space: any
 dev_dependencies:
   dart_flutter_team_lints: ^3.1.0
+
+dependency_overrides:
+  analyzer: 6.11.0
+  _fe_analyzer_shared: 76.0.0
 
 workspace:
   - _benchmark
@@ -12,7 +24,6 @@ workspace:
   - build_daemon
   - build_modules
   - build_runner
-  - build_test
   - build_web_compilers
   - example
   - scratch_space
