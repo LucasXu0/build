@@ -233,7 +233,7 @@ class AnalyzerResolver implements ReleasableResolver {
         if (fragment is LibraryFragment) {
           return result.unitWithPath(fragment.source.fullName)?.unit;
         }
-        return result.getFragmentDeclaration(fragment)?.node;
+        return result.getElementDeclaration2(fragment)?.node;
       } else {
         final result = session.getParsedLibrary(path) as ParsedLibraryResult;
         if (fragment is LibraryFragment) {
@@ -242,7 +242,7 @@ class AnalyzerResolver implements ReleasableResolver {
               .firstWhereOrNull((unit) => unit.path == unitPath)
               ?.unit;
         }
-        return result.getFragmentDeclaration(fragment)?.node;
+        return result.getElementDeclaration2(fragment)?.node;
       }
     });
   }
