@@ -50,6 +50,7 @@ Future<String> defaultSdkSummaryGenerator() async {
   final packageConfig = await loadPackageConfigUri(
     Uri.parse(buildProcessState.packageConfigUri),
   );
+
   Future<String> packagePath(String package) async {
     final libRoot = packageConfig.resolve(Uri.parse('package:$package/'));
     return p.dirname(p.fromUri(libRoot));
@@ -73,16 +74,17 @@ Future<String> defaultSdkSummaryGenerator() async {
       final tempDir = await Directory(cacheDir).createTemp();
       final tempFile = File(p.join(tempDir.path, p.basename(summaryPath)));
       await tempFile.create();
+
       final embedderYamlPath =
           isFlutter ? p.join(_dartUiPath, '_embedder.yaml') : null;
-      await tempFile.writeAsBytes(
-        await buildSdkSummary(
-          sdkPath: _runningDartSdkPath,
-          resourceProvider: PhysicalResourceProvider.INSTANCE,
-          embedderYamlPath: embedderYamlPath,
-        ),
+
+      final summaryBytes = await buildSdkSummary(
+        sdkPath: _runningDartSdkPath,
+        resourceProvider: PhysicalResourceProvider.INSTANCE,
+        embedderYamlPath: embedderYamlPath,
       );
 
+      await tempFile.writeAsBytes(summaryBytes);
       await tempFile.rename(summaryPath);
       await _createDepsFile(depsFile, currentDeps);
       await tempDir.delete();

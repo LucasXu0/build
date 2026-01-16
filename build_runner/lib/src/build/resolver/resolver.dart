@@ -135,8 +135,12 @@ class PerActionResolver implements ReleasableResolver {
     if (!await _step.canRead(assetId)) {
       throw AssetNotFoundException(assetId);
     }
+
     await _resolveIfNecessary(assetId, transitive: true);
-    return _delegate.libraryFor(assetId, allowSyntaxErrors: allowSyntaxErrors);
+
+    final result = await _delegate.libraryFor(assetId, allowSyntaxErrors: allowSyntaxErrors);
+
+    return result;
   });
 
   // Ensures we only resolve one entrypoint at a time from the same build step,
@@ -285,12 +289,15 @@ class AnalyzerResolver implements ReleasableResolver {
 
         final path = AnalysisDriverFilesystem.assetPath(assetId);
         final parsedResult = _driver.currentSession.getParsedUnit(path);
+
         if (parsedResult is! ParsedUnitResult || parsedResult.isPart) {
           throw NonLibraryAssetException(assetId);
         }
 
-        return await _driver.currentSession.getLibraryByUri(uri.toString())
+        final result = await _driver.currentSession.getLibraryByUri(uri.toString())
             as LibraryElementResult;
+
+        return result;
       }),
     );
 
@@ -501,14 +508,18 @@ class AnalyzerResolvers implements Resolvers {
     return Result.release(
       _initialized ??= Result.capture(() async {
         _warnOnLanguageVersionMismatch();
+
         final loadedConfig =
             _packageConfig ??= await loadPackageConfigUri(
               Uri.parse(buildProcessState.packageConfigUri),
             );
+
+        final sdkSummaryPath = await _sdkSummaryGenerator();
+
         final driver = await analysisDriver(
           _analysisDriverModel,
           _analysisOptions,
-          await _sdkSummaryGenerator(),
+          sdkSummaryPath,
           loadedConfig,
         );
 

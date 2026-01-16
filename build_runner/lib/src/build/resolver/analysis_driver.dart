@@ -23,16 +23,22 @@ Future<AnalysisDriverForPackageBuild> analysisDriver(
   String sdkSummaryPath,
   PackageConfig packageConfig,
 ) async {
-  return createAnalysisDriver(
+  final packages = _buildAnalyzerPackages(
+    packageConfig,
+    analysisDriverModel.filesystem,
+  );
+
+  final sdkSummaryBytes = File(sdkSummaryPath).readAsBytesSync();
+
+  final driver = createAnalysisDriver(
     analysisOptions: analysisOptions,
-    packages: _buildAnalyzerPackages(
-      packageConfig,
-      analysisDriverModel.filesystem,
-    ),
+    packages: packages,
     resourceProvider: analysisDriverModel.filesystem,
-    sdkSummaryBytes: File(sdkSummaryPath).readAsBytesSync(),
+    sdkSummaryBytes: sdkSummaryBytes,
     uriResolvers: [analysisDriverModel.filesystem],
   );
+
+  return driver;
 }
 
 Packages _buildAnalyzerPackages(
